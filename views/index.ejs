@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Document</title>
+</head>
+<body>
+    <h1>Hello the world</h1>
+
+
+    <form id="ent" action="/qrcode" method="post">
+        <div>
+            <label for="name">name</label>
+            <input type="text" name="name" id="name">
+        </div>
+        <div>
+            <label for="age">age</label>
+            <input type="text" name="age" id="age">
+        </div>
+        <div>
+            <label for="city">name</label>
+            <input type="text" name="city" id="city">
+        </div>
+
+
+    </form>
+    
+<h1>src :  <%=src%> </h1>
+
+                    <img id="qrcodeimg" src="<%=src%>" alt="">
+
+</body>
+
+<script>
+    let src = null
+    let inputs = Array.from(document.querySelectorAll("input"))
+
+        inputs.forEach((input)=>{
+            input.addEventListener("input",()=>{
+                let data = {}
+                inputs.forEach((ele)=>{
+                    data[ele.name] = ele.value
+                    console.log(ele.name+"++++"+ele.value)
+                    console.log(data)
+
+                })
+
+                    fetch("/qrcode",
+                            {
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                    },
+                                method:"post",
+                                body:JSON.stringify(data),
+                            })
+                    .then(function (response) {
+                                if (response.ok) {
+                                    return response.json();
+                                }
+                                return Promise.reject(response);
+                            })
+                    .then(function (data) {
+                                document.getElementById("qrcodeimg").src = data.src
+                                console.log(data);
+                    })
+                    .catch(function (error) {
+                                console.warn('Something went wrong.', error);
+                    });
+                
+            })
+
+        })
+    console.log(inputs)
+    
+</script>
+</html>
